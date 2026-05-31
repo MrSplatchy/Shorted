@@ -6,8 +6,6 @@ import (
 	"shortener/internal/config"
 	"shortener/internal/models"
 
-	"github.com/asaskevich/govalidator"
-
 	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -23,12 +21,6 @@ func CreateUrl(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	ok := govalidator.IsURL(req.Url)
-	if ok != true {
-		c.JSON(400, gin.H{"error": "This is not an URL, please retry"})
 		return
 	}
 
@@ -71,6 +63,44 @@ func RetrieveUrl(c *gin.Context) {
 	}
 
 	err := config.DB.Where("short_code = ?", req.Shortcode).First(&shape).Error
+
+	res := models.UrlResponse{
+		ID:        shape.ID,
+		Url:       shape.Url,
+		ShortCode: shape.ShortCode,
+		CreatedAt: shape.CreatedAt,
+		UpdatedAt: shape.UpdatedAt,
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+
+}
+
+func UpdateUrl(c *gin.Context) {
+	var req models.UrlRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	req.Shortcode = c.Param("shortcode")
+
+	shape := models.Urls{
+		Url:       req.Url,
+		ShortCode: req.Shortcode,
+	}
+
+	err = config.DB.Model(&models.Urls{}).
+		Where("short_code = ?", req.Shortcode).
+		Update("url", req.Url).
+		First(&shape).
+		Error
 
 	res := models.UrlResponse{
 		ID:        shape.ID,

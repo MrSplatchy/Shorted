@@ -1,16 +1,16 @@
 info:
-  name: Create URL
+  name: Update Url
   type: http
-  seq: 1
+  seq: 3
 
 http:
-  method: POST
-  url: http://localhost:8080/api/shorten
+  method: PUT
+  url: http://localhost:8080/api/KHXzpN
   body:
     type: json
     data: |-
       {
-        "url":"ht"
+        "url":"https://github.com/"
       }
   auth: inherit
 
