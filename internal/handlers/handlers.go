@@ -3,9 +3,10 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"net/url"
 	"shortener/internal/config"
 	"shortener/internal/models"
+
+	"github.com/asaskevich/govalidator"
 
 	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
@@ -19,10 +20,16 @@ func Ping(c *gin.Context) {
 func CreateUrl(c *gin.Context) {
 	var req models.UrlRequest
 
-	req.Url = c.Query("url")
-	_, err := url.Parse(req.Url)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.String(400, "Bad request")
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	ok := govalidator.IsURL(req.Url)
+	if ok != true {
+		c.JSON(400, gin.H{"error": "This is not an URL, please retry"})
+		return
 	}
 
 	shape := models.Urls{
@@ -39,16 +46,45 @@ func CreateUrl(c *gin.Context) {
 		CreatedAt: shape.CreatedAt,
 		UpdatedAt: shape.UpdatedAt,
 	}
-	// If It cannot find a Record, it will not populate the current shape, so we can add a new one
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = config.DB.Create(&shape).Error
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			shape.ShortCode = uniuri.NewLen(7)
-		}
 
-		c.JSON(http.StatusCreated, res)
+	// Incase if the record already exists
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusOK, res)
 		return
 	}
-	//Normally shouldn't be executed if it is a new URL
+
+	err = config.DB.Create(&shape).Error
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		shape.ShortCode = uniuri.NewLen(6)
+	}
+
 	c.JSON(http.StatusCreated, res)
+}
+
+func RetrieveUrl(c *gin.Context) {
+	var req models.UrlRequest
+
+	req.Shortcode = c.Param("shortcode")
+
+	shape := models.Urls{
+		ShortCode: req.Shortcode,
+	}
+
+	err := config.DB.Where("short_code = ?", req.Shortcode).First(&shape).Error
+
+	res := models.UrlResponse{
+		ID:        shape.ID,
+		Url:       shape.Url,
+		ShortCode: shape.ShortCode,
+		CreatedAt: shape.CreatedAt,
+		UpdatedAt: shape.UpdatedAt,
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.String(http.StatusBadRequest, "error")
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+
 }

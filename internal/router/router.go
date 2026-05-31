@@ -12,4 +12,5 @@ func SetRouter(r *gin.Engine) {
 	api := r.Group("/api")
 
 	api.POST("/shorten", handlers.CreateUrl)
+	api.GET("/:shortcode", handlers.RetrieveUrl)
 }

@@ -8,12 +8,13 @@ import (
 
 type Urls struct {
 	gorm.Model
-	Url       string `gorm:"not null"`
+	Url       string
 	ShortCode string `gorm:"uniqueIndex"`
 }
 
 type UrlRequest struct {
-	Url string `json:"url" binding:"required,url"`
+	Url       string `json:"url" binding:"required,url"`
+	Shortcode string
 }
 
 type UrlResponse struct {
