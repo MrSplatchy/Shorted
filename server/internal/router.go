@@ -6,6 +6,7 @@ import (
 
 func SetRouter(r *gin.Engine) {
 	r.GET("/ping", Ping)
+	r.GET("/:shortcode", Redirect)
 
 	api := r.Group("/api")
 

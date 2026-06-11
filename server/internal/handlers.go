@@ -136,3 +136,26 @@ func DeleteURL(c *gin.Context) {
 	c.Status(http.StatusOK)
 
 }
+
+func Redirect(c *gin.Context) {
+	var req UrlRequest
+
+	req.Shortcode = c.Param("shortcode")
+
+	shape := Urls{
+		ShortCode: req.Shortcode,
+	}
+
+	err := DB.Where("short_code = ?", req.Shortcode).First(&shape).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	res := UrlResponse{
+		Url: shape.Url,
+	}
+
+	c.Redirect(301, res.Url)
+}

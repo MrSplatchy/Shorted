@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/api/aqLNZH
+  url: http://localhost:8080/api/QLxMs6
   auth: inherit
 
 settings:

@@ -5,12 +5,12 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/shorten
+  url: http://localhost:8080/api/
   body:
     type: json
     data: |-
       {
-        "url":"ht"
+        "url":"https://www.baeldung.com/cs/redirection-status-codes"
       }
   auth: inherit
 
