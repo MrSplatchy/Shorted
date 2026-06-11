@@ -1,10 +1,8 @@
-package handlers
+package internal
 
 import (
 	"errors"
 	"net/http"
-	"shortener/internal/config"
-	"shortener/internal/models"
 
 	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
@@ -16,7 +14,7 @@ func Ping(c *gin.Context) {
 }
 
 func CreateUrl(c *gin.Context) {
-	var req models.UrlRequest
+	var req UrlRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -24,14 +22,14 @@ func CreateUrl(c *gin.Context) {
 		return
 	}
 
-	shape := models.Urls{
+	shape := Urls{
 		Url:       req.Url,
 		ShortCode: uniuri.NewLen(6),
 	}
 
-	err = config.DB.Where("url = ?", req.Url).First(&shape).Error
+	err = DB.Where("url = ?", req.Url).First(&shape).Error
 	// Setup a response
-	res := models.UrlResponse{
+	res := UrlResponse{
 		ID:        shape.ID,
 		Url:       shape.Url,
 		ShortCode: shape.ShortCode,
@@ -45,7 +43,7 @@ func CreateUrl(c *gin.Context) {
 		return
 	}
 
-	err = config.DB.Create(&shape).Error
+	err = DB.Create(&shape).Error
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
 		shape.ShortCode = uniuri.NewLen(6)
 	}
@@ -54,17 +52,17 @@ func CreateUrl(c *gin.Context) {
 }
 
 func RetrieveUrl(c *gin.Context) {
-	var req models.UrlRequest
+	var req UrlRequest
 
 	req.Shortcode = c.Param("shortcode")
 
-	shape := models.Urls{
+	shape := Urls{
 		ShortCode: req.Shortcode,
 	}
 
-	err := config.DB.Where("short_code = ?", req.Shortcode).First(&shape).Error
+	err := DB.Where("short_code = ?", req.Shortcode).First(&shape).Error
 
-	res := models.UrlResponse{
+	res := UrlResponse{
 		ID:        shape.ID,
 		Url:       shape.Url,
 		ShortCode: shape.ShortCode,
@@ -82,7 +80,7 @@ func RetrieveUrl(c *gin.Context) {
 }
 
 func UpdateUrl(c *gin.Context) {
-	var req models.UrlRequest
+	var req UrlRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -91,18 +89,18 @@ func UpdateUrl(c *gin.Context) {
 	}
 	req.Shortcode = c.Param("shortcode")
 
-	shape := models.Urls{
+	shape := Urls{
 		Url:       req.Url,
 		ShortCode: req.Shortcode,
 	}
 
-	err = config.DB.Model(&models.Urls{}).
+	err = DB.Model(&Urls{}).
 		Where("short_code = ?", req.Shortcode).
 		Update("url", req.Url).
 		First(&shape).
 		Error
 
-	res := models.UrlResponse{
+	res := UrlResponse{
 		ID:        shape.ID,
 		Url:       shape.Url,
 		ShortCode: shape.ShortCode,
@@ -116,5 +114,25 @@ func UpdateUrl(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+
+}
+
+func DeleteURL(c *gin.Context) {
+	var req UrlRequest
+
+	req.Shortcode = c.Param("shortcode")
+
+	shape := Urls{
+		ShortCode: req.Shortcode,
+	}
+
+	err := DB.Where("short_code = ?", req.Shortcode).Delete(&shape).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	c.Status(http.StatusOK)
 
 }

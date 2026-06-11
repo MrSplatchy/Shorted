@@ -1,8 +1,6 @@
-package config
+package internal
 
 import (
-	"shortener/internal/models"
-
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -10,14 +8,17 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
-	var Urls models.Urls
+	var Urls Urls
 
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 
-	db.AutoMigrate(&Urls)
+	err = db.AutoMigrate(&Urls)
+	if err != nil {
+		panic(err)
+	}
 
 	DB = db
 }
