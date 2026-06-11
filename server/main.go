@@ -7,8 +7,11 @@ import (
 )
 
 func main() {
-	internal.ConnectDB()
 	r := gin.Default()
+	r.Use(gin.Logger(), gin.Recovery())
+
+	internal.ConnectDB()
 	internal.SetRouter(r)
-	r.Run()
+
+	r.Run("0.0.0.0:8080")
 }
