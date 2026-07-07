@@ -1,16 +1,57 @@
+"use client";
+
+import { useState } from "react";
+
 export default function App() {
+  let tab= [
+    { label: "Cre", content: <div>This will appear first</div> },
+    { label: "Settings", content: <p>Second tab</p> },
+    { label: "Security", content: <p>...Seems like the last tab</p> },
+  ];
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex flex-col flex-8  font-sans bg-dots items-center justify-center" >
-        <h1 className=" font-semibold text-4xl text-center ">Make your urls shorter with Shorted</h1>
+      <main className="flex flex-col flex-9 h-full  font-sans bg-dots items-center justify-evenly" >
+        <h1 className="font-semibold text-6xl text-center">Shorted</h1>
+
+        <TabbedCard tabs={tab}/>
       </main>
 
       <hr className=" text-emerald-100"/>
       
       <footer className="flex-1 bg-neutral-800">
-        <p className="font-mono opacity-45 text-center ">made by Mr.<a href="https://github.com/MrSplatchy" target="__blank" className=" underline">Splatchy</a></p>
+        <p className="font-mono opacity-45 text-center ">Made by Mr.<a href="https://github.com/MrSplatchy" target="__blank" className=" underline">Splatchy</a></p>
       </footer>
     </div>
 
   );
 }
+
+// Returns a map of buttons and their content
+function TabbedCard({ tabs }) {
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const activeContent = tabs[activeIndex]?.content
+
+  return (
+    <div className="w-11/12 max-w-2xl  overflow-hidden rounded-l border border-border bg-stone-800 shadow-xl shadow-black/20">
+      <div className="flex border-b border-border px-2">
+        {tabs.map((tab, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`relative px-4 py-2 text-sm font-medium tracking-wide transition-colors border-b-2 ${
+              activeIndex === index
+                ? "text-foreground border-green-600 border-b-4 "
+                : "text-muted-foreground hover:text-foreground border-transparent hover:cursor-crosshair hover:bg-green-600"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-6 text-card-foreground">{activeContent}</div>
+    </div>
+  )
+}
+
