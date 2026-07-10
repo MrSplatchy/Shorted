@@ -14,7 +14,7 @@ func Ping(c *gin.Context) {
 }
 
 func CreateUrl(c *gin.Context) {
-	var req UrlRequest
+	var req UrlRequestUrl
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -28,6 +28,7 @@ func CreateUrl(c *gin.Context) {
 	}
 
 	err = DB.Where("url = ?", req.Url).First(&shape).Error
+
 	// Setup a response
 	res := UrlResponse{
 		ID:        shape.ID,
@@ -36,7 +37,6 @@ func CreateUrl(c *gin.Context) {
 		CreatedAt: shape.CreatedAt,
 		UpdatedAt: shape.UpdatedAt,
 	}
-
 	// Incase if the record already exists
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		c.JSON(http.StatusOK, res)
@@ -52,7 +52,7 @@ func CreateUrl(c *gin.Context) {
 }
 
 func RetrieveUrl(c *gin.Context) {
-	var req UrlRequest
+	var req UrlRequestShortcode
 
 	req.Shortcode = c.Param("shortcode")
 
@@ -80,7 +80,7 @@ func RetrieveUrl(c *gin.Context) {
 }
 
 func UpdateUrl(c *gin.Context) {
-	var req UrlRequest
+	var req UrlRequestAll
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -118,7 +118,7 @@ func UpdateUrl(c *gin.Context) {
 }
 
 func DeleteURL(c *gin.Context) {
-	var req UrlRequest
+	var req UrlRequestShortcode
 
 	req.Shortcode = c.Param("shortcode")
 
@@ -138,7 +138,7 @@ func DeleteURL(c *gin.Context) {
 }
 
 func Redirect(c *gin.Context) {
-	var req UrlRequest
+	var req UrlRequestShortcode
 
 	req.Shortcode = c.Param("shortcode")
 

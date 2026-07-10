@@ -5,7 +5,7 @@ import axios from "axios";
 
 export default function App() {
   let tab= [
-    { label: "Create Shortcut", content: <CreateURL/> },
+    { label: "Create Shortcut", content: <CreateURL key="key"/> },
     { label: "Change URL Shortcut", content: <p>Second tab</p> },
     { label: "lonzrrfrergrt", content: <p>...Seems like the last tab</p> },
   ];
@@ -60,7 +60,8 @@ function CreateURL(){
   const [url, setURL] = useState("")
   const [submitted, setSubmitted] = useState(false)
   const [state, setState] = useState("")
-  
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
   const handleChange = event => setURL(event.target.value)
 
@@ -68,12 +69,14 @@ function CreateURL(){
     event.preventDefault()
 
   axios
-    .post("http://localhost:8080/api/create", {
+    .post(`${apiUrl}/api/`, {
       url: url
     })
-    .then((response) => setState(response.data))
-    .catch((error) => setState(error))
+    .then((response) => setState(response.data.shortCode))
+    .catch((error) => setState(error.message))
     .finally(() => console.log("Request completed"));
+
+    setSubmitted(true)
 
     return state
   }
@@ -88,12 +91,12 @@ function CreateURL(){
         className="min-w-7/12 placeholder:text-center"
       />
 
-      <button type="submit" className="border w-2/12 mt-4">
+      <button type="submit" className="border w-5/12 mt-4 field-sizing-content">
           Submit
       </button>
 
       {submitted && (
-        <p>{state}</p>
+        <label className="">{state}</label>
       )}
     </form>
   )

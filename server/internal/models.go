@@ -12,7 +12,15 @@ type Urls struct {
 	ShortCode string `gorm:"uniqueIndex"`
 }
 
-type UrlRequest struct {
+type UrlRequestUrl struct {
+	Url string `json:"url" binding:"required,url"`
+}
+
+type UrlRequestShortcode struct {
+	Shortcode string
+}
+
+type UrlRequestAll struct {
 	Url       string `json:"url" binding:"required,url"`
 	Shortcode string
 }
