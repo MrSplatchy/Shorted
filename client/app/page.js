@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 export default function App() {
   let tab= [
-    { label: "Create Shortcut", content: <div>This will appear first</div> },
+    { label: "Create Shortcut", content: <CreateURL/> },
     { label: "Change URL Shortcut", content: <p>Second tab</p> },
     { label: "lonzrrfrergrt", content: <p>...Seems like the last tab</p> },
   ];
@@ -55,3 +56,45 @@ function TabbedCard({ tabs }) {
   )
 }
 
+function CreateURL(){
+  const [url, setURL] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+  const [state, setState] = useState("")
+  
+
+  const handleChange = event => setURL(event.target.value)
+
+  const handleSubmit = event => {
+    event.preventDefault()
+
+  axios
+    .post("http://localhost:8080/api/create", {
+      url: url
+    })
+    .then((response) => setState(response.data))
+    .catch((error) => setState(error))
+    .finally(() => console.log("Request completed"));
+
+    return state
+  }
+
+  return(
+    <form className="flex flex-col  items-center justify-center min-w-7/12" onSubmit={handleSubmit}>
+      <input
+        type="text" 
+        value={url}
+        onChange={handleChange}
+        placeholder="Please enter an URL to shorten"
+        className="min-w-7/12 placeholder:text-center"
+      />
+
+      <button type="submit" className="border w-2/12 mt-4">
+          Submit
+      </button>
+
+      {submitted && (
+        <p>{state}</p>
+      )}
+    </form>
+  )
+}

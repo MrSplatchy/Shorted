@@ -10,7 +10,7 @@ func SetRouter(r *gin.Engine) {
 
 	api := r.Group("/api")
 
-	api.POST("/", CreateUrl)
+	api.POST("/create", CreateUrl)
 	api.GET("/:shortcode", RetrieveUrl)
 	api.PUT("/:shortcode", UpdateUrl)
 	api.DELETE("/:shortcode", UpdateUrl)
