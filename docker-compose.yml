@@ -8,15 +8,15 @@ services:
     ports:
       - "8080:8080"
     environment:
-      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:3000}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:5173}
 
   client:
     build:
       context: ./client
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+        NEXT_PUBLIC_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: shorted-client
     ports:
-      - "3000:3000"
+      - "5173:5173"
     depends_on:
       - server

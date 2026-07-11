@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import axios from "axios";
 
@@ -7,7 +5,6 @@ export default function App() {
   let tab= [
     { label: "Create Shortcut", content: <CreateURL key="key"/> },
     { label: "Change URL Shortcut", content: <p>Second tab</p> },
-    { label: "lonzrrfrergrt", content: <p>...Seems like the last tab</p> },
   ];
   return (
     <div className="flex flex-col min-h-screen">
@@ -61,7 +58,7 @@ function CreateURL(){
   const [submitted, setSubmitted] = useState(false)
   const [state, setState] = useState("")
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080"
 
   const handleChange = event => setURL(event.target.value)
 

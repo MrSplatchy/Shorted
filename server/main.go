@@ -14,7 +14,7 @@ func main() {
 
 	clientOrigin := os.Getenv("CLIENT_ORIGIN")
 	if clientOrigin == "" {
-		clientOrigin = "http://localhost:3000"
+		clientOrigin = "http://localhost:5173"
 	}
 
 	r.Use(cors.New(cors.Config{
