@@ -5,12 +5,12 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/
+  url: http://localhost/api
   body:
     type: json
     data: |-
       {
-        "url":"https://www.baeldung.com/cs/redirection-status-codes"
+        "url":"http://localhost:5173/"
       }
   auth: inherit
 

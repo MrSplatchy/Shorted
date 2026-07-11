@@ -29,6 +29,11 @@ func CreateUrl(c *gin.Context) {
 
 	err = DB.Where("url = ?", req.Url).First(&shape).Error
 
+	err = DB.Create(&shape).Error
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		shape.ShortCode = uniuri.NewLen(6)
+	}
+
 	// Setup a response
 	res := UrlResponse{
 		ID:        shape.ID,
@@ -41,11 +46,6 @@ func CreateUrl(c *gin.Context) {
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		c.JSON(http.StatusOK, res)
 		return
-	}
-
-	err = DB.Create(&shape).Error
-	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		shape.ShortCode = uniuri.NewLen(6)
 	}
 
 	c.JSON(http.StatusCreated, res)

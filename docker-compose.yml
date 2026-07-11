@@ -8,15 +8,26 @@ services:
     ports:
       - "8080:8080"
     environment:
-      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:5173}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost}
 
   client:
     build:
       context: ./client
-      args:
-        NEXT_PUBLIC_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: shorted-client
     ports:
       - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost}
     depends_on:
       - server
+
+  nginx:
+    image: nginx:alpine
+    container_name: shorted-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - server
+      - client
