@@ -4,7 +4,7 @@ import axios from "axios";
 export default function App() {
   let tab= [
     { label: "Create Shortcut", content: <CreateURL key="key"/> },
-    { label: "Change URL Shortcut", content: <p>Second tab</p> },
+    // { label: "Change URL Shortcut", content: <p>Second tab</p> },
   ];
   return (
     <div className="flex flex-col min-h-screen">
@@ -59,6 +59,7 @@ function CreateURL(){
   const [state, setState] = useState("")
 
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080"
+  const redirectUrl = apiUrl+"/"+state
 
   const handleChange = event => setURL(event.target.value)
 
@@ -85,7 +86,7 @@ function CreateURL(){
         value={url}
         onChange={handleChange}
         placeholder="Please enter an URL to shorten"
-        className="min-w-7/12 placeholder:text-center"
+        className="min-w-7/12 placeholder:text-center text-center"
       />
 
       <button type="submit" className="border w-5/12 mt-4 field-sizing-content">
@@ -93,7 +94,7 @@ function CreateURL(){
       </button>
 
       {submitted && (
-        <label className="">{state}</label>
+        <a className=" mt-3 " href={redirectUrl}>{state}</a>
       )}
     </form>
   )
