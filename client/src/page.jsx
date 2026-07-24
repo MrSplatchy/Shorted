@@ -58,7 +58,7 @@ function CreateURL(){
   const [submitted, setSubmitted] = useState(false)
   const [state, setState] = useState("")
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080"
+  const apiUrl = "http://localhost"
   const redirectUrl = apiUrl+"/"+state
 
   const handleChange = event => setURL(event.target.value)

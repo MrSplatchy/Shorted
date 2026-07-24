@@ -7,8 +7,7 @@ services:
     container_name: shorted-server
     ports:
       - "8080:8080"
-    environment:
-      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost}
+
 
   client:
     build:
@@ -16,8 +15,6 @@ services:
     container_name: shorted-client
     ports:
       - "5173:5173"
-    environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost}
     depends_on:
       - server
 

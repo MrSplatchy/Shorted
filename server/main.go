@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"shortener/internal"
 
 	"github.com/gin-contrib/cors"
@@ -12,11 +11,8 @@ import (
 func main() {
 	r := gin.Default()
 
-	clientOrigin := os.Getenv("CLIENT_ORIGIN")
-	if clientOrigin == "" {
-		clientOrigin = "http://localhost:5173"
-	}
-
+	clientOrigin := "http://localhost"
+	
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{clientOrigin},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
