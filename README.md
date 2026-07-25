@@ -1,7 +1,10 @@
 # Shorted
 Simple self-hostable URL shortener
 
-#Getting Started
+# Screenshot
+<img width="1544" height="1350" alt="image" src="https://github.com/user-attachments/assets/0701e33d-4b9d-45b9-ad6f-27da130e4ba6" />
+
+# Getting Started
 
 **Prerequisites**
 - Docker and Docker Compose installed
